@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block subtitle %}
+  - Search
+{% endblock %}
+
+{% block body %}
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+    <h1> Search </h1>
+    <h3> {{ alert }} </h3>
+    <form action="{{ url_for('search') }}" class="form-group" method="post">
+      <br>
+      <input name="search" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <br>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <br>
+      <p>
+        {% if results != [] %}
+        Results for {{searc}}:
+        {% else %}
+        No results found.
+        {% endif %}
+      </p>
+    </form>
+
+    {% for result in results %}
+      <a href="{{ url_for('book', book_title=result.book_title) }}">
+        {{ result.book_title }} by {{ result.author }} <br>
+        <h6> <small> ISBN: {{ result.ibsn }} </small> </h6> <br>
+      </a>
+    {% endfor %}
+
+  </div>
+</div>
+
+
+
+{% endblock %}

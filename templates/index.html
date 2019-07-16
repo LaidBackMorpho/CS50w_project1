@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block subtitle %}
+  - Home
+{% endblock %}
+
+{% block body %}
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+    <h1> Homepage </h1>
+    <h3> {{ alert }} </h3>
+    <p>
+
+    </p>
+    <a href="{{ url_for('login') }}"> {% if session["logged_in"] %}
+      Log out
+      {% else %}
+      Log in
+      {% endif %} </a>
+  </div>
+</div>
+
+
+
+{% endblock %}

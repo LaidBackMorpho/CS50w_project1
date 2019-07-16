@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block subtitle %}
+  - Book List
+{% endblock %}
+
+{% block body %}
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+    <h1> Books </h1>
+    <h3> {{ alert }} </h3>
+    {% for book in books %}
+      <a href="{{ url_for('book', book_title=book.book_title )}}">
+        {{ book.book_title }} <br>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+{% endblock %}

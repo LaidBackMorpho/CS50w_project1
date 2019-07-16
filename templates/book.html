@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block subtitle %}
+  - {{ book.title }}
+{% endblock %}
+
+{% block body %}
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+    <h2> {{ book.book_title }} </h2>
+    <h3> {{ alert }} </h3>
+    <h4> Author: {{ book.author }} </h4>
+    <h4> Year: {{ book.year }} </h4>
+    <h4> ISBN: {{ book.ibsn }} </h4>
+    <br>
+    <h2> Reviews </h2>
+    <br>
+    <h5> Average Rating on Goodreads: {{ good_average_rating }}</h5>
+    <h5> Total Reviews on Goodreads: {{ good_review_number }}</h5>
+    <br>
+    {% if not session["logged_in"]%}
+    <p>
+      Want to make a review for this book?
+      <a href="{{ url_for('login') }}"> Login </a> or
+      <a href="{{ url_for('register')}}"> Register </a>
+    </p>
+    {% elif session["logged_in"] and not made_review %}
+
+    <p>
+      Want to make a reivew for this book?
+      <br>
+      Share your thoughts:
+    </p>
+
+    <form action="{{ url_for('book', book_title=book.book_title) }}" method="post">
+      <div class="form-group">
+      <label class="mr-sm-2" for="inlineFormCustomSelect">Rating:</label>
+          <select name="stars" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+            <option selected>Choose...</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select><br>
+
+          <label for="comment">Comment:</label>
+          <textarea name="review" class="form-control" rows="5" id="comment"></textarea><br>
+          <button type="submit" class="btn btn-primary">Submit</button><br>
+        </div>
+    </form>
+
+    {% else %}
+
+    {% endif %}
+
+
+    {% for review in reviews %}
+    {% if review.book == book.book_title %}
+      <h4> {{review.author}} rated it {{review.rating}}/5 </h4>
+      <p>
+        {{review.comment}}
+      </p>
+    {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
