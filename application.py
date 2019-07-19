@@ -67,7 +67,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if session.get("logged_in"):
-        return render_template("index.html", message="You're already logged in!")
+        return render_template("index.html", alert="You're already logged in!")
     else:
 
         if request.method == "POST":
@@ -85,13 +85,13 @@ def register():
                     db.execute("INSERT INTO users (username, passhash) VALUES (:username, :passhash)", {"username" : username, "passhash" : hashed.decode('utf8')})
                     db.commit()
                 else:
-                    return render_template("index.html", message="Error! The Username you entered was not available.") # Change this to a notification on the register page later...
+                    return render_template("index.html", alert="Error! The Username you entered was not available.")
 
-                # Render the homepage with a new message
-                return render_template("index.html", message="Success! You have been registered.")
+                # Render the homepage with a new alert
+                return render_template("index.html", alert="Success! You have been registered.")
 
             else:
-                return render_template("register.html", message="Your username or password must be longer than that!")
+                return render_template("register.html", alert="Your username or password must be longer than that!")
 
         else:
             return render_template("register.html")
@@ -110,7 +110,7 @@ def book(book_title):
     book = db.execute("SELECT * FROM books WHERE book_title = :book_title", {"book_title":book_title}).fetchone()
 
     if book is None:
-        return render_template("index.html", message="Looks like we don't have a page for that book yet.")
+        return render_template("index.html", alert="Looks like we don't have a page for that book yet.")
 
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QzYXcuEKWBsDhDzdKWDuw", "isbns": book.ibsn}) # Yeah, I know the B and N are swapped
                                                                                                                                          # but I already exported the books.
@@ -136,7 +136,7 @@ def book(book_title):
             poster = db.execute("SELECT * FROM users WHERE id = :id", {"id":session["user_id"]}).fetchone()
 
             if poster is None:
-                return render_template("book.html", message="Something has gone terribly, terribly wrong.", book=book, made_review=True, reviews=reviews, good_average_rating=good_average_rating, good_review_number=good_review_number)
+                return render_template("book.html", alert="Something has gone terribly, terribly wrong.", book=book, made_review=True, reviews=reviews, good_average_rating=good_average_rating, good_review_number=good_review_number)
 
             if db.execute("SELECT * FROM reviews WHERE author = :author AND book = :book", {"author":poster.username, "book":book.book_title}).rowcount == 0:
                 db.execute("INSERT INTO reviews (author, rating, comment, book) VALUES (:author, :rating, :comment, :book)", {"author":poster.username, "rating":stars, "comment":review, "book":book.book_title})
