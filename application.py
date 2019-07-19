@@ -132,12 +132,15 @@ def book(book_title):
         stars = request.form.get("stars")
         review = request.form.get("review")
 
-        if poster is None:
-            return render_template("book.html", message="Something has gone terribly, terribly wrong.", book=book, made_review=True, reviews=reviews, good_average_rating=good_average_rating, good_review_number=good_review_number)
+        if session["logged_in"]:
+            poster = db.execute("SELECT * FROM users WHERE id = :id", {"id":session["user_id"]}).fetchone()
 
-        if db.execute("SELECT * FROM reviews WHERE author = :author AND book = :book", {"author":poster.username, "book":book.book_title}).rowcount == 0:
-            db.execute("INSERT INTO reviews (author, rating, comment, book) VALUES (:author, :rating, :comment, :book)", {"author":poster.username, "rating":stars, "comment":review, "book":book.book_title})
-            db.commit()
+            if poster is None:
+                return render_template("book.html", message="Something has gone terribly, terribly wrong.", book=book, made_review=True, reviews=reviews, good_average_rating=good_average_rating, good_review_number=good_review_number)
+
+            if db.execute("SELECT * FROM reviews WHERE author = :author AND book = :book", {"author":poster.username, "book":book.book_title}).rowcount == 0:
+                db.execute("INSERT INTO reviews (author, rating, comment, book) VALUES (:author, :rating, :comment, :book)", {"author":poster.username, "rating":stars, "comment":review, "book":book.book_title})
+                db.commit()
 
         reviews = db.execute("SELECT * FROM reviews").fetchall()
         return render_template("book.html", book=book, made_review=True, reviews=reviews, good_average_rating=good_average_rating, good_review_number=good_review_number)
